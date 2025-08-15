@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/authStore";
+import { generateRequestId, logInfo, logError, redactShallow } from "@/lib/safe-logger";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -19,7 +20,7 @@ const schema = z.object({
 
 export default function LoginPage() {
 	const router = useRouter();
-	const setTicket = useAuthStore((s) => s.setTicket);
+	const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
 
 	const {
 		handleSubmit,
@@ -33,19 +34,24 @@ export default function LoginPage() {
 
 	const onSubmit = async (values) => {
 		try {
+			const requestId = generateRequestId();
+			logInfo(`[login] (${requestId}) submit`, redactShallow(values));
 			const res = await fetch("/api/auth/ticket", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(values),
 			});
+			logInfo(`[login] (${requestId}) response received`, { status: res.status });
 			const data = await res.json();
-			if (data?.Sonuc && data?.ID) {
-				setTicket(data.ID);
+			if (data?.Sonuc) {
+				setAuthenticated(true);
 				router.push("/dashboard");
 				return;
 			}
+			logError(`[login] (${requestId}) auth failed`);
 			toast.error("Giriş bilgileri hatalı");
 		} catch (e) {
+			logError("[login] unhandled error", { message: String(e?.message || e) });
 			toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
 		} finally {
 			reset({ Sifre: "" });
