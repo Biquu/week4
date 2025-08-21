@@ -637,10 +637,12 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 		return `${val.toFixed(val < 10 && idx > 0 ? 1 : 0)} ${units[idx]}`;
 	}
 
-	function FileIcon({ name }) {
+	function FileIcon({ name, className = "" }) {
 		const ext = getExt(name);
 		let Icon = File;
 		let cls = "text-muted-foreground";
+		
+		// İkon renk ve tipi ayarlamaları - ikinci görseldeki gibi
 		if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext)) {
 			Icon = FileImage; cls = "text-sky-500";
 		} else if (["mp4", "mov", "avi", "mkv", "webm"].includes(ext)) {
@@ -651,12 +653,20 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 			Icon = FileArchive; cls = "text-orange-500";
 		} else if (["xls", "xlsx", "csv"].includes(ext)) {
 			Icon = FileSpreadsheet; cls = "text-emerald-600";
-		} else if (["pdf", "doc", "docx", "txt", "rtf", "md"].includes(ext)) {
-			Icon = FileText; cls = ext === "pdf" ? "text-red-600" : "text-blue-600";
+		} else if (["pdf", "ppt", "pptx"].includes(ext)) {
+			Icon = FileText; cls = "text-red-600";
+		} else if (["doc", "docx", "odt"].includes(ext)) {
+			Icon = FileText; cls = "text-blue-600";
+		} else if (["txt", "rtf", "md"].includes(ext)) {
+			Icon = FileText; cls = "text-neutral-600"; 
 		} else if (["js", "ts", "tsx", "jsx", "json", "xml", "html", "css"].includes(ext)) {
 			Icon = FileCode; cls = "text-teal-600";
+		} else if (["form", "divvyform"].includes(ext)) {
+			cls = "text-cyan-500";
 		}
-		return <Icon className={`h-8 w-8 ${cls}`} />;
+		
+		// İkon boyut ve stil ayarları
+		return <Icon className={`${cls} ${className}`} />;
 	}
 
 	// Handle file/folder actions
@@ -761,7 +771,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 						{uploadStatus === "uploading" && (
 							<div className="space-y-4">
 								<div className="flex items-center gap-3">
-									<FileIcon name={uploadFileName} />
+									<FileIcon name={uploadFileName} className="h-10 w-10" />
 									<div className="flex-1">
 										<p className="text-sm font-medium">{uploadFileName}</p>
 										<p className="text-xs text-muted-foreground mt-1">{uploadProgress}% yüklendi</p>
@@ -821,7 +831,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 	};
 
 	return (
-		<div className="px-6 py-5 mx-auto max-w-7xl space-y-4">
+		<div className="px-3 sm:px-4 md:px-5 py-5 mx-auto max-w-[2000px] w-full space-y-4">
 			{renderUploadDialog()}
 			{/* Toolbar */}
 			<div className="sticky top-0 z-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
@@ -1002,7 +1012,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 				<div className="space-y-6">
 					<div>
 						<h2 className="text-lg font-medium mb-3">Klasörler</h2>
-						<div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 							{[...Array(4)].map((_, i) => (
 								<Card key={`skeleton-folder-${i}`} className="animate-pulse">
 									<CardContent className="flex flex-col items-center gap-2 p-3">
@@ -1015,7 +1025,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 					</div>
 					<div>
 						<h2 className="text-lg font-medium mb-3">Dosyalar</h2>
-						<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 							{[...Array(4)].map((_, i) => (
 								<Card key={`skeleton-file-${i}`} className="animate-pulse">
 									<CardContent className="flex flex-col items-center gap-2 p-5">
@@ -1032,7 +1042,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 					{/* Klasörler Başlığı ve Grid */}
 					<div>
 						<h2 className="text-lg font-medium mb-3">Klasörler</h2>
-						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-5">
 							{sortedFolders.map((f) => (
 								<FileContextMenu 
 									key={`f-${f.ID}`}
@@ -1045,17 +1055,17 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 									onRefresh={() => load(path)}
 									onOpenFolder={() => goInto(f.Adi)}
 								>
-									<Card className="group border border-border/50 hover:border-primary/30 overflow-hidden">
+									<Card className="group border border-border/40 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow transition-all">
 										<CardContent className="p-0">
 											<button 
 												onClick={() => goInto(f.Adi)} 
-												className="w-full flex flex-row items-center gap-2 py-1.5 px-3"
+												className="w-full flex flex-row items-center gap-3 py-2 px-3 hover:bg-muted/40 rounded transition-colors"
 											>
-												<Folder className="h-5 w-5 text-primary flex-shrink-0" />
-												<span className="text-sm truncate">{f.Adi}</span>
+												<Folder className="h-8 w-8 text-[#facc15] flex-shrink-0" />
+												<span className="text-sm font-medium truncate">{f.Adi}</span>
 											</button>
 										</CardContent>
-										<div className="absolute top-0 right-0">
+										<div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
 											<FileActionMenu 
 												item={{
 													name: f.Adi,
@@ -1075,7 +1085,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 					{/* Dosyalar Başlığı ve Grid */}
 					<div>
 						<h2 className="text-lg font-medium mb-3">Dosyalar</h2>
-						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-5">
 							{sortedFiles.map((f) => (
 								<FileContextMenu 
 									key={`d-${f.ID}`}
@@ -1087,18 +1097,18 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 									type="file"
 									onRefresh={() => load(path)}
 								>
-									<Card className="group border border-border/50 hover:border-primary/30 overflow-hidden">
+									<Card className="group border border-border/40 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow transition-all">
 										<CardContent className="p-0">
 											<div 
-												className="w-full h-full flex flex-col items-center justify-center py-4 px-3 cursor-pointer"
-												onClick={() => handleDownloadFile(f)}
-											>
-												<FileIcon name={f.Adi} />
-												<span className="text-sm truncate w-full text-center mt-2">{f.Adi}</span>
-												<span className="text-xs text-muted-foreground mt-1">{f.Boyut > 0 ? formatBytes(f.Boyut) : "0 B"}</span>
+														className="w-full h-full flex flex-col items-center justify-center py-8 px-2 cursor-pointer hover:bg-muted/40 rounded transition-colors"
+														onClick={() => handleDownloadFile(f)}
+													>
+												<FileIcon name={f.Adi} className="h-32 w-32 mb-4" />
+												<span className="text-base truncate w-full text-center font-medium">{f.Adi}</span>
+												<span className="text-sm text-muted-foreground mt-1">{f.Boyut > 0 ? formatBytes(f.Boyut) : "0 B"}</span>
 											</div>
 										</CardContent>
-										<div className="absolute top-1 right-1">
+										<div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
 											<FileActionMenu 
 												item={{
 													name: f.Adi,
@@ -1147,14 +1157,14 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 											onOpenFolder={() => goInto(f.Adi)}
 										>
 											<div className="group hover:bg-muted/40">
-												<div className="flex items-center justify-between px-3 py-3">
+												<div className="flex items-center justify-between px-4 py-4">
 													<div className="flex-1 min-w-0">
 														<button onClick={() => goInto(f.Adi)} className="flex items-center gap-3 max-w-full">
-															<Folder className="h-5 w-5 text-primary shrink-0" />
-															<span className="truncate group-hover:text-primary">{f.Adi}</span>
+															<Folder className="h-7 w-7 text-primary shrink-0" />
+															<span className="truncate group-hover:text-primary text-base">{f.Adi}</span>
 														</button>
 													</div>
-													<div className="w-32 text-center text-xs text-muted-foreground">
+													<div className="w-32 text-center text-sm text-muted-foreground">
 														Klasör
 													</div>
 													<div className="w-20 flex justify-end">
@@ -1205,12 +1215,12 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 											onRefresh={() => load(path)}
 										>
 											<div className="group hover:bg-muted/40">
-												<div className="flex items-center justify-between px-3 py-3">
+												<div className="flex items-center justify-between px-4 py-4">
 													<div className="flex-1 min-w-0 flex items-center gap-3">
-														<FileIcon name={f.Adi} />
-														<span className="truncate">{f.Adi}</span>
+														<FileIcon name={f.Adi} className="h-8 w-8" />
+														<span className="truncate text-base">{f.Adi}</span>
 													</div>
-													<div className="w-32 text-center text-xs text-muted-foreground">
+													<div className="w-32 text-center text-sm text-muted-foreground">
 														{f.Boyut > 0 ? formatBytes(f.Boyut) : "0 B"}
 													</div>
 													<div className="w-20 flex justify-end">
