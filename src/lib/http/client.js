@@ -38,4 +38,40 @@ export async function fetchJson(path, { method = "GET", body, headers = {}, time
 	}
 }
 
+export async function fetchGet(path, params = {}, { headers = {}, timeoutMs = DEFAULT_TIMEOUT_MS, withBasicAuth = false } = {}) {
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), timeoutMs);
+	try {
+		const baseUrl = (process.env.API_BASE_URL || "").replace(/\/$/, "");
+		const usp = new URLSearchParams();
+		for (const [k, v] of Object.entries(params)) {
+			if (v === undefined || v === null) continue;
+			// Kök için klasorYolu boş string olmalı; diğer anahtarlar boş ise gönderme
+			if (v === "" && k !== "klasorYolu") continue;
+			usp.append(k, String(v));
+		}
+		const url = `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}${usp.toString() ? `?${usp.toString()}` : ""}`;
+		const finalHeaders = { ...headers };
+		if (withBasicAuth) {
+			const user = process.env.API_AUTH_USER;
+			const pass = process.env.API_AUTH_PASS;
+			if (user && pass) {
+				const basic = Buffer.from(`${user}:${pass}`).toString("base64");
+				finalHeaders["Authorization"] = `Basic ${basic}`;
+			}
+		}
+		const res = await fetch(url, { method: "GET", headers: finalHeaders, signal: controller.signal });
+		const text = await res.text();
+		let data;
+		try {
+			data = text ? JSON.parse(text) : null;
+		} catch {
+			data = text;
+		}
+		return { status: res.status, ok: res.ok, headers: res.headers, data };
+	} finally {
+		clearTimeout(timeout);
+	}
+}
+
 

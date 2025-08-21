@@ -1,7 +1,7 @@
 // In-memory session store (replace with Redis in production)
 // Maps opaque session IDs to DivvyDrive ticket IDs with expiration.
-
-const sessions = new Map();
+// Persist across dev hot-reloads using a global singleton.
+const sessions = (globalThis.__DD_SESSIONS ||= new Map());
 const DEFAULT_TTL_MS = 45 * 60 * 1000; // 45 minutes
 
 export function createSession(ticketId, ttlMs = DEFAULT_TTL_MS) {
@@ -25,6 +25,25 @@ export function getTicketBySession(sessionId) {
 
 export function deleteSession(sessionId) {
 	sessions.delete(sessionId);
+}
+
+export function getSessionTicketFromRequest(request) {
+	const cookieHeader = request.headers.get("cookie") || "";
+	const match = /(?:^|; )dd_sid=([^;]+)/.exec(cookieHeader);
+	if (!match?.[1]) return null;
+	const sid = decodeURIComponent(match[1]);
+	const ticket = getTicketBySession(sid);
+	return ticket;
+}
+
+export function getSessionIdFromRequest(request) {
+	const cookieHeader = request.headers.get("cookie") || "";
+	const match = /(?:^|; )dd_sid=([^;]+)/.exec(cookieHeader);
+	return match?.[1] ? decodeURIComponent(match[1]) : null;
+}
+
+export function getStoreSize() {
+	return sessions.size;
 }
 
 

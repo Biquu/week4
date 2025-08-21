@@ -68,10 +68,17 @@ export async function POST(request) {
 
 		// Create opaque session id mapped to ticket on the server
 		const sessionId = createSession(result.data.ID);
-		// Set HttpOnly cookie with session id (not ticket)
-		const cookie = [
-			`dd_sid=${encodeURIComponent(sessionId)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${45 * 60}`,
+		// Build HttpOnly cookie (Secure only in production so localhost works)
+		const isProd = process.env.NODE_ENV === "production";
+		const parts = [
+			`dd_sid=${encodeURIComponent(sessionId)}`,
+			"Path=/",
+			"HttpOnly",
+			"SameSite=Strict",
+			`Max-Age=${45 * 60}`,
 		];
+		if (isProd) parts.push("Secure");
+		const cookie = [parts.join("; ")];
 		return new Response(JSON.stringify({ Sonuc: true }), {
 			status: 200,
 			headers: { "Content-Type": "application/json", "Set-Cookie": cookie },
