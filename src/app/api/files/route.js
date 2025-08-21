@@ -1,6 +1,10 @@
 import { getSessionTicketFromRequest } from "@/lib/session-store";
 import { generateRequestId, logInfo, logError } from "@/lib/safe-logger";
-import { dosyaOlustur, dosyaGuncelle, dosyaTasi, dosyaSil } from "@/services/divvydrive/files";
+import { 
+  dosyaOlustur, dosyaGuncelle, dosyaTasi, dosyaSil, 
+  dosyaIndir, dosyaDirektYukle, dosyaMetaDataKaydiOlustur,
+  dosyaParcalariYukle, dosyaYayinla
+} from "@/services/divvydrive/files";
 
 export async function POST(request) {
 	const requestId = generateRequestId();

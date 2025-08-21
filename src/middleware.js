@@ -1,32 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-const PROTECTED_PREFIXES = ["/dashboard"]; // genişletilebilir
-
+// Next.js 13+ için middleware ile istekleri işle
 export function middleware(request) {
-	const { pathname } = request.nextUrl;
-	const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
-	const isLogin = pathname.startsWith("/login");
-
-	const cookie = request.cookies.get("dd_sid");
-	const hasTicket = Boolean(cookie?.value);
-
-	if (isProtected && !hasTicket) {
-		const url = request.nextUrl.clone();
-		url.pathname = "/login";
-		return NextResponse.redirect(url);
-	}
-
-	if (isLogin && hasTicket) {
-		const url = request.nextUrl.clone();
-		url.pathname = "/dashboard";
-		return NextResponse.redirect(url);
-	}
-
-	return NextResponse.next();
+  // Büyük dosya yüklemeleri için gerekli ayarları yap
+  const response = NextResponse.next();
+  
+  // Uzun süreli bağlantılar için keep-alive ekle
+  response.headers.set('Connection', 'keep-alive');
+  
+  return response;
 }
 
+// Hangi yollar için middleware çalışacak
 export const config = {
-	matcher: ["/login", "/dashboard/:path*"],
+  matcher: ['/api/files/:path*', '/api/files/download/get'],
 };
-
-

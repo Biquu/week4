@@ -2,6 +2,7 @@ import { getSessionTicketFromRequest } from "@/lib/session-store";
 import { klasorListesiGetir, dosyaListesiGetir } from "@/services/divvydrive/browse";
 import { generateRequestId, logInfo, logError } from "@/lib/safe-logger";
 import { getSessionIdFromRequest, getStoreSize } from "@/lib/session-store";
+export { dynamic, dynamicParams, revalidate, runtime } from '../route-config';
 
 export async function GET(request) {
 	const requestId = generateRequestId();
