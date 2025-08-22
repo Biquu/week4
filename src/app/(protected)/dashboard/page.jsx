@@ -296,7 +296,7 @@ export default function DashboardPage() {
 			} else if (data.RequiresChunkedUpload) {
 				// Parçalı yükleme gerekiyor
 				setUploadStatus("processing");
-				toast.info("Dosya boyutu 1MB'dan büyük olduğundan parçalı yükleme başlatılıyor");
+				//toast.info("Dosya boyutu 1MB'dan büyük olduğundan parçalı yükleme başlatılıyor");
 				
 				// Büyük dosya yükleme işlemi
 				await handleChunkedUpload(file);
