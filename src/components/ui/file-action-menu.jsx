@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RenameDialog } from "@/components/ui/dialog-rename";
 import { MoveDialog } from "@/components/ui/dialog-move";
+import { DeleteDialog } from "@/components/ui/dialog-delete";
 
 export function FileActionMenu({ item, type, onRefresh }) {
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const handleDownload = async () => {
     toast.loading(`${item.name} indiriliyor...`, { id: "download" });
     
@@ -88,36 +90,8 @@ export function FileActionMenu({ item, type, onRefresh }) {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      if (!confirm(`"${item.name}" öğesini silmek istediğinizden emin misiniz?`)) {
-        return;
-      }
-      
-      if (type === "folder") {
-        await fetch(`/api/folders`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            klasorYolu: item.path || "", 
-            klasorAdi: item.name 
-          })
-        });
-      } else {
-        await fetch(`/api/files`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            klasorYolu: item.path || "", 
-            dosyaAdi: item.name 
-          })
-        });
-      }
-      toast.success(`${type === "folder" ? "Klasör" : "Dosya"} silindi`);
-      if (onRefresh) onRefresh();
-    } catch (error) {
-      toast.error(`Silme işlemi başarısız: ${error.message}`);
-    }
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true);
   };
 
   const handleRename = () => {
@@ -187,6 +161,15 @@ export function FileActionMenu({ item, type, onRefresh }) {
       <MoveDialog
         isOpen={isMoveDialogOpen}
         onClose={() => setIsMoveDialogOpen(false)}
+        item={item}
+        type={type}
+        onRefresh={onRefresh}
+      />
+
+      {/* Silme Dialog */}
+      <DeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
         item={item}
         type={type}
         onRefresh={onRefresh}

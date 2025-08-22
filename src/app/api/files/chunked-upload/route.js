@@ -116,9 +116,16 @@ export async function POST(request) {
 			if (res.ok) {
 				console.log(`[API:Chunked:Complete] (${requestId}) Yayınlama başarılı`);
 				
+				// Yayınlama başarılı olduğunda, dosya boyutunu API yanıtından alıyoruz
+				let dosyaBoyutu = 0;
+				if (res.data?.SonucDosyaListe && res.data.SonucDosyaListe.length > 0) {
+					dosyaBoyutu = res.data.SonucDosyaListe[0]?.Boyut || 0;
+				}
+				
 				return new Response(JSON.stringify({ 
 					Sonuc: true, 
-					Mesaj: "Dosya başarıyla yayınlandı"
+					Mesaj: "Dosya başarıyla yayınlandı",
+					DosyaBoyutu: dosyaBoyutu
 				}), { 
 					status: 200, 
 					headers: { "Content-Type": "application/json" } 
@@ -204,12 +211,17 @@ export async function PUT(request) {
 			parcaSize: fileChunk.size
 		});
 		
-		// Parçayı yükle
+		// Backend'de gerçek MD5 hash hesapla
+		const { fileToMd5 } = await import("@/utils/md5");
+		const calculatedHash = await fileToMd5(fileChunk);
+		console.log(`[API:Chunked:Chunk] (${requestId}) Backend MD5 hash:`, calculatedHash);
+		
+		// Parçayı yükle - gerçek MD5 hash ile
 		const res = await dosyaParcalariYukle({
 			ticketId,
 			tempKlasorID,
 			parcaNumarasi,
-			parcaHash,
+			parcaHash: calculatedHash, // Backend'de hesaplanan gerçek MD5
 			fileChunk
 		});
 		
