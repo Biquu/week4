@@ -11,7 +11,7 @@ export default function DashboardLayout({ children }) {
 	return (
 		<div className="min-h-svh flex relative overflow-x-hidden">
 			<Sidebar collapsed={collapsed} onToggle={() => setCollapsed((s) => !s)} />
-			<div className={`flex-1 flex flex-col ${collapsed ? 'ml-24' : 'ml-80'} transition-[margin] duration-300`}>
+			<div className={`flex-1 flex flex-col ${collapsed ? 'ml-28' : 'ml-80'} transition-[margin] duration-300`}>
 				<Header onToggleSidebar={() => setCollapsed((s) => !s)} />
 				<main className="flex-1">{children}</main>
 			</div>

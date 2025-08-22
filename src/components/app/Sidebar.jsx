@@ -23,12 +23,12 @@ export default function Sidebar({ collapsed = false, onToggle }) {
 	const pathname = usePathname();
 	const router = useRouter();
 	const logoutStore = useAuthStore((s) => s.logout);
-	const widthClass = collapsed ? "w-24" : "w-80";
+	const widthClass = collapsed ? "w-28" : "w-80";
 	return (
 		<aside className={`flex flex-col ${widthClass} shrink-0 border-r border-r-muted/60 bg-background/60 transition-[width] duration-300 shadow-sm fixed top-0 bottom-0 left-0 z-40`}>
-			<div className="h-24 px-2 flex items-center justify-center border-b border-b-muted/40">
-				<Link href="/dashboard" className="flex items-center gap-3 py-3 hover:opacity-80 transition-opacity w-full justify-center">
-					<div className="relative mx-auto ml-6 h-16 w-16 overflow-hidden rounded-sm">
+			<div className="h-44 px-4 flex items-center border-b border-b-muted/40">
+				<Link href="/dashboard" className="flex items-center gap-3 py-1 hover:opacity-80 transition-opacity w-full">
+					<div className={`relative ${collapsed ? "h-20 w-20" : "h-32 w-32"} ml-2 overflow-hidden rounded-sm`}>
 						<Image src="/logo.png" alt="logo" fill className="object-contain" />
 					</div>
 					

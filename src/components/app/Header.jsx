@@ -27,7 +27,7 @@ export default function Header({ onToggleSidebar }) {
 		}
 	}
 	return (
-		<header className="h-16 border-b bg-background/90 sticky top-0 z-20 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 shadow-sm">
+		<header className="h-20 border-b bg-background/90 sticky top-0 z-20 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 shadow-sm">
 			<div className="h-full px-4 md:px-6 flex items-center justify-between gap-4 max-w-[1920px] mx-auto">
 				<div className="flex items-center gap-3">
 					<Sheet>
@@ -51,11 +51,11 @@ export default function Header({ onToggleSidebar }) {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="ghost" className="gap-2 pl-2 pr-2.5 rounded-full border-0 hover:bg-muted/50">
-								<Avatar className="h-8 w-8 ring-2 ring-primary/20">
+								<Avatar className="h-12 w-12 ring-2 ring-primary/20">
 									<AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">DD</AvatarFallback>
 								</Avatar>
 								<div className="flex items-center gap-1 hidden md:flex">
-									<span className="text-sm font-medium">Test Kullanıcı</span>
+									<span className="text-lg font-medium">Test Kullanıcı</span>
 									<ChevronDown className="h-4 w-4 text-muted-foreground" />
 								</div>
 							</Button>

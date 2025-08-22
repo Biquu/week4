@@ -1160,7 +1160,7 @@ const sortedFiles = [...filteredFiles].sort((a, b) => {
 												<div className="flex items-center justify-between px-4 py-4">
 													<div className="flex-1 min-w-0">
 														<button onClick={() => goInto(f.Adi)} className="flex items-center gap-3 max-w-full">
-															<Folder className="h-7 w-7 text-primary shrink-0" />
+															<Folder className="h-7 w-7 text-[#facc15] shrink-0" />
 															<span className="truncate group-hover:text-primary text-base">{f.Adi}</span>
 														</button>
 													</div>
